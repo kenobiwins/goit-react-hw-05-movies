@@ -14,22 +14,21 @@ export const MovieDetails = () => {
   const navigate = useNavigate();
 
   const handleToBack = () => {
-    navigate(location.state?.from);
+    // console.log(location.state);
+    navigate(location.state?.from || '/movies');
   };
-
   useEffect(() => {
     getMovieAndInfoById(movieId).then(data => {
       return setMovie(data);
     });
   }, [movieId]);
-  // display: grid;
-  //     grid-template-columns: 320px 1fr;
+
   return (
     <>
       {movie && (
         <>
           <button onClick={handleToBack}>to back</button>
-          <Box display="grid" gridTemplateColumns="320px 1fr">
+          <Box display="grid" gridTemplateColumns="320px 1fr" gridGap="12px">
             <img
               src={
                 movie.poster_path === null || undefined

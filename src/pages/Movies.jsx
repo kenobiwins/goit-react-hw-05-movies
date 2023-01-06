@@ -3,10 +3,14 @@ import { getMovieBySearch } from 'services/API';
 import { useSearchParams } from 'react-router-dom';
 import { MovieGallery } from 'components/MovieGallery/MovieGallery';
 import { Box } from 'BaseStyles/Box';
+import { NOT_FOUND_IMAGE } from 'constants/BaseURLs';
+import { STATUS } from 'constants/status.constants';
 
 export const Movies = () => {
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState([]);
+  const [status, setStatus] = useState(STATUS.idle);
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -14,15 +18,29 @@ export const Movies = () => {
     if (query === null) {
       return;
     }
-
-    getMovieBySearch({ query }).then(({ results }) => {
-      return setMovies(results);
-    });
+    try {
+      setQuery(query);
+      getMovieBySearch({ query }).then(({ results }) => {
+        if (results.length === 0) {
+          setStatus(STATUS.rejected);
+          throw new Error('results length 0');
+        } else {
+          setStatus(STATUS.resolved);
+          setMovies(results);
+          return;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    return;
   }, [searchParams]);
 
   const handleSubmit = e => {
     e.preventDefault();
 
+    setStatus(STATUS.pending);
+    setMovies([]);
     setSearchParams(query !== '' ? { query } : {});
     setQuery('');
   };
@@ -45,7 +63,17 @@ export const Movies = () => {
         </form>
 
         <Box as="ul" display="grid" gridGap="6px" mt="6px">
-          {movies.length > 0 && <MovieGallery movies={movies} />}
+          {movies.length > 0 && status === STATUS.resolved && (
+            <MovieGallery movies={movies} />
+          )}
+          {status === STATUS.rejected && (
+            <div>
+              <img src={NOT_FOUND_IMAGE} alt="what?" />
+              <p>
+                We tried very hard but did not find results for your request
+              </p>
+            </div>
+          )}
         </Box>
       </section>
     </main>

@@ -8,19 +8,32 @@ import {
   NOT_FOUND_IMAGE,
 } from 'constants/BaseURLs';
 import { Box } from 'BaseStyles/Box';
+import { STATUS } from 'constants/status.constants';
 
 export const Cast = () => {
   const [cast, setCast] = useState([]);
+  const [status, setStatus] = useState(STATUS.idle);
   const { movieId } = useParams();
 
   useEffect(() => {
-    getMovieAndInfoById(movieId, '/credits').then(({ cast }) => {
-      setCast(
-        cast.map(({ profile_path, name, original_name, character }) => {
-          return { profile_path, name, original_name, character };
-        })
-      );
-    });
+    try {
+      getMovieAndInfoById(movieId, '/credits').then(({ cast }) => {
+        setStatus(STATUS.pending);
+        if (cast.length === 0) {
+          setStatus(STATUS.rejected);
+          throw new Error("We don't have any cast for this movie.");
+        } else {
+          setCast(
+            cast.map(({ profile_path, name, original_name, character }) => {
+              return { profile_path, name, original_name, character };
+            })
+          );
+          setStatus(STATUS.resolved);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }, [movieId]);
 
   return (
@@ -30,7 +43,9 @@ export const Cast = () => {
       gridGap="8px"
       gridTemplateColumns="repeat(5,1fr)"
     >
-      {cast && cast.length > 0 ? (
+      {cast &&
+        cast.length > 0 &&
+        status === 'resolved' &&
         cast.map(({ profile_path, name, original_name, character }) => {
           return (
             <li key={name}>
@@ -46,8 +61,8 @@ export const Cast = () => {
               <p>Character: {character}</p>
             </li>
           );
-        })
-      ) : (
+        })}
+      {status === 'rejected' && (
         <div>
           <p>We don't have any cast for this movie.</p>
           <img src={NOT_FOUND_IMAGE} alt="what?" />
