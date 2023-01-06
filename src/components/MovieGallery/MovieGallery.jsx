@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useLocation, NavLink } from 'react-router-dom';
-import PropTypes, { shape } from 'prop-types';
-import { arrayOf } from 'prop-types';
+import PropTypes from 'prop-types';
 
 const NavItem = styled(NavLink)`
   text-decoration: none;
