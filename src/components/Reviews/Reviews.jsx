@@ -32,8 +32,7 @@ export const Reviews = () => {
 
   return (
     <ul>
-      {reviews &&
-        reviews.length > 0 &&
+      {reviews.length > 0 &&
         status === 'resolved' &&
         reviews.map(({ id, author, content }) => {
           return (

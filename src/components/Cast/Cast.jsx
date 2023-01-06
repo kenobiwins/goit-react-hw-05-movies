@@ -43,8 +43,7 @@ export const Cast = () => {
       gridGap="8px"
       gridTemplateColumns="repeat(5,1fr)"
     >
-      {cast &&
-        cast.length > 0 &&
+      {cast.length > 0 &&
         status === 'resolved' &&
         cast.map(({ profile_path, name, original_name, character }) => {
           return (
