@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { useLocation, NavLink } from 'react-router-dom';
+import PropTypes, { shape } from 'prop-types';
+import { arrayOf } from 'prop-types';
 
 const NavItem = styled(NavLink)`
   text-decoration: none;
@@ -29,4 +31,13 @@ export const MovieGallery = ({ movies }) => {
       })}
     </>
   );
+};
+
+MovieGallery.propTypes = {
+  movies: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      title: PropTypes.string,
+    })
+  ),
 };
