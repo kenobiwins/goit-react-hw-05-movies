@@ -1,18 +1,6 @@
-import styled from 'styled-components';
-import { useLocation, NavLink } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
-const NavItem = styled(NavLink)`
-  text-decoration: none;
-  color: ${p => p.theme.colors.primary};
-  padding: ${p => p.theme.space[2]}px;
-  font-size: ${p => p.theme.fontSizes.s};
-
-  &:not(.active):hover,
-  &:not(.active):focus {
-    color: ${p => p.theme.colors.secondary};
-  }
-`;
+import { MovieGalleryItem } from './MovieGallery.styled';
 
 export const MovieGallery = ({ movies }) => {
   const location = useLocation();
@@ -22,9 +10,9 @@ export const MovieGallery = ({ movies }) => {
       {movies.map(({ id, title }) => {
         return (
           <li key={id}>
-            <NavItem to={`/movies/${id}`} state={{ from: location }}>
+            <MovieGalleryItem to={`/movies/${id}`} state={{ from: location }}>
               {title}
-            </NavItem>
+            </MovieGalleryItem>
           </li>
         );
       })}
